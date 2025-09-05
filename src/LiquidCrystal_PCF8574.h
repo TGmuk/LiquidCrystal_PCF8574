@@ -27,7 +27,7 @@
 #define LiquidCrystal_PCF8574_h
 
 #include "Arduino.h"
-#include <Wire.h>	
+#include <SoftWire.h>
 #include "Print.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -68,7 +68,7 @@ public:
 
   // Functions from reference:
 
-  void begin(uint8_t cols, uint8_t rows, TwoWire &wirePort = Wire);
+  void begin(uint8_t cols, uint8_t rows, SoftWire *softWirePort = nullptr);
 
   void clear();
   void home();
@@ -102,7 +102,9 @@ public:
 
 private:
 
-  TwoWire *_i2cPort; //The generic connection to user's chosen I2C hardware
+  SoftWire *_i2cPort; //The generic connection to user's chosen I2C hardware
+  char *swTxBuffer;
+  char *swRxBuffer;
 
   // instance variables
   uint8_t _i2cAddr; ///< Wire Address of the LCD

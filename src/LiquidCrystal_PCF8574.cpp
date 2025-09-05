@@ -8,7 +8,10 @@
 
 #include "LiquidCrystal_PCF8574.h"
 
-#include <Wire.h>
+#include <SoftWire.h>
+#define TX_RX_BUFFER_SIZE 16
+#define DEFAULT_SDA_PIN PA12
+#define DEFAULT_SCL_PIN PA11
 
 LiquidCrystal_PCF8574::LiquidCrystal_PCF8574(uint8_t i2cAddr)
 {
@@ -56,9 +59,14 @@ void LiquidCrystal_PCF8574::init(uint8_t i2cAddr, uint8_t rs, uint8_t rw, uint8_
 } // init()
 
 
-void LiquidCrystal_PCF8574::begin(uint8_t cols, uint8_t lines, TwoWire &wirePort)
+void LiquidCrystal_PCF8574::begin(uint8_t cols, uint8_t lines, SoftWire *softWirePort)
 {
-  _i2cPort = &wirePort; //Grab which port the user wants us to use
+  if(softWirePort == nullptr){
+    _i2cPort = new SoftWire(DEFAULT_SDA_PIN, DEFAULT_SCL_PIN);
+  }else{
+    _i2cPort = softWirePort;
+  }
+
 
   _cols = min(cols, (uint8_t)80);
   _lines = min(lines, (uint8_t)4);
@@ -75,7 +83,14 @@ void LiquidCrystal_PCF8574::begin(uint8_t cols, uint8_t lines, TwoWire &wirePort
   }
 
   // initializing the display
+  swTxBuffer = (char*)malloc(TX_RX_BUFFER_SIZE);
+  swRxBuffer = (char*)malloc(TX_RX_BUFFER_SIZE);;
+  _i2cPort->setTxBuffer(swTxBuffer, TX_RX_BUFFER_SIZE);
+  _i2cPort->setRxBuffer(swRxBuffer, TX_RX_BUFFER_SIZE);
+  _i2cPort->setDelay_us(5);
+  _i2cPort->setTimeout(5);
   _i2cPort->begin();
+
   _write2Wire(0x00, LOW, false);
   delayMicroseconds(50000);
 
