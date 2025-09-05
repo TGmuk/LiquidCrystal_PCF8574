@@ -20,6 +20,7 @@ Or do not specify the SoftWire interface and use a predefined interface (SCL: PA
 
 This library is intended for use with an STM32 MCU and a BaseShield that does not have hardware I2C connected to the display. (For whatever reason...)
 
+This library depends on this SoftWire library: <https://docs.arduino.cc/libraries/softwire/>
 
 
 Original Library: <https://github.com/mathertel/LiquidCrystal_PCF8574>
